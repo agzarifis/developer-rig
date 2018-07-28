@@ -58,7 +58,7 @@ module.exports = function(app, extension) {
     message = {
       type: 'MESSAGE',
       data: {
-        topic: `channel-ext-v1.${req.params.channelId}-${clientId}-broadcast`,
+        topic: `channel-ext-v1.${req.params.channelId}-${clientId}-${req.body.targets[0]}`,
         message: JSON.stringify(message) + '\r\n',
       }
     };
