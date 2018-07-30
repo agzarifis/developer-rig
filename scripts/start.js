@@ -79,7 +79,7 @@ if (cmdOptions.local) {
     process.env.EXT_SECRET = "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk";
   }
 } else {
-  process.env.COORDINATOR_URL = "https://extension-files.twitch.tv/coordinator/7.7.0/extension-coordinator.umd.js";
+  process.env.COORDINATOR_URL = "https://extension-files.twitch.tv/coordinator/7.14.0/extension-coordinator.umd.js";
   process.env.API_HOST = "api.twitch.tv";
 }
 console.log('clientId:', process.env.EXT_CLIENT_ID);
@@ -114,7 +114,7 @@ const createDevServerConfig = require('../config/webpackDevServer.config');
 const useYarn = fs.existsSync(paths.yarnLockFile);
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+if (!checkRequiredFiles([paths.appHtml, paths.appIndex])) {
   process.exit(1);
 }
 

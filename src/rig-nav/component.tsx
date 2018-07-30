@@ -1,17 +1,17 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { EXTENSION_VIEWS, BROADCASTER_CONFIG, LIVE_CONFIG, CONFIGURATIONS, PRODUCT_MANAGEMENT } from '../constants/nav-items';
+import { ExtensionViews, BroadcasterConfig, LiveConfig, Configurations, ProductManagement } from '../constants/nav-items';
 import { UserDropdown } from '../user-dropdown';
 import { LoginButton } from '../login-button';
 import { UserSession } from '../core/models/user-session';
 import { ExtensionManifest } from '../core/models/manifest';
 import './component.sass';
+import { MockApiDropdown } from './mock-api-dropdown';
 
 export interface PublicProps {
   openProductManagementHandler: Function,
   openConfigurationsHandler: Function,
   viewerHandler: Function,
-  loginHandler: Function,
   configHandler: Function,
   liveConfigHandler: Function,
   selectedView: string,
@@ -21,7 +21,9 @@ export interface PublicProps {
 export interface ReduxStateProps {
   session?: UserSession,
   manifest?: ExtensionManifest,
+  mockApiEnabled?: boolean,
 }
+
 type Props = PublicProps & ReduxStateProps;
 
 export class RigNavComponent extends React.Component<Props> {
@@ -38,31 +40,30 @@ export class RigNavComponent extends React.Component<Props> {
 
   public render() {
     const { session, manifest, selectedView } = this.props;
-
     const extensionViewsClass = classNames({
       'offset': true,
       'top-nav-item': true,
-      'top-nav-item__selected': selectedView === EXTENSION_VIEWS,
+      'top-nav-item__selected': selectedView === ExtensionViews,
     });
 
     const broadcasterConfigClass = classNames({
       'top-nav-item': true,
-      'top-nav-item__selected': selectedView === BROADCASTER_CONFIG,
+      'top-nav-item__selected': selectedView === BroadcasterConfig,
     });
 
     const liveConfigClass = classNames({
       'top-nav-item': true,
-      'top-nav-item__selected': selectedView === LIVE_CONFIG,
+      'top-nav-item__selected': selectedView === LiveConfig,
     });
 
     const configurationsClass = classNames({
       'top-nav-item': true,
-      'top-nav-item__selected': selectedView === CONFIGURATIONS,
+      'top-nav-item__selected': selectedView === Configurations,
     });
 
     const productManagementClass = classNames({
       'top-nav-item': true,
-      'top-nav-item__selected': selectedView === PRODUCT_MANAGEMENT,
+      'top-nav-item__selected': selectedView === ProductManagement,
       'top-nav-item__disabled': !(session && session.login) || !(manifest && manifest.bits_enabled),
     });
 
@@ -76,6 +77,7 @@ export class RigNavComponent extends React.Component<Props> {
       return (
         <div className='top-nav'>
           <div className='personal-bar'>
+            <MockApiDropdown />
             {manifest && <div className='personal-bar__ext-name'>
               <span>{manifest.name}</span>
             </div>}

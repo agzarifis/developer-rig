@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { UserSession } from '../core/models/user-session';
-const { fetchNewRelease } = require('../util/api');
-const reddot = require('../img/reddot.svg');
+import { fetchNewRelease } from '../util/api';
+import * as reddot from '../img/reddot.svg';
+import * as whitetriangle from '../img/whitetriangle.svg';
 import './component.sass';
 
 export interface PublicProps {
@@ -21,35 +22,37 @@ interface State {
 
 type Props = PublicProps & ReduxDispatchProps;
 export class UserDropdownComponent extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      open: false,
-      showNewRelease: false,
-      releaseUrl: null,
-    }
+  public state: State = {
+    open: false,
+    showNewRelease: false,
+    releaseUrl: null,
   }
-  private signOut() {
+
+  private signOut = () => {
     localStorage.removeItem('rigLogin');
     this.props.logout();
   }
-  private toggleDropdown() {
+
+  private toggleDropdown = () => {
     this.setState({
       open: !this.state.open,
     })
   }
+
   public componentDidMount() {
-    if(process.env.GIT_RELEASE) {
-      fetchNewRelease((tagName : string, releaseUrl : string) => {
-        if(tagName !== process.env.GIT_RELEASE) {
-          this.setState({
-            showNewRelease: true,
-            releaseUrl,
-          });
-        }
-      });
+    if (process.env.GIT_RELEASE) {
+      fetchNewRelease()
+        .then((result) => {
+          if (result.tagName !== process.env.GIT_RELEASE) {
+            this.setState({
+              showNewRelease: true,
+              releaseUrl: result.zipUrl,
+            });
+          }
+        });
     }
   }
+
   public render() {
     if (!this.props.session) {
       return null;
@@ -64,15 +67,20 @@ export class UserDropdownComponent extends React.Component<Props, State> {
       'transition': true,
       'open': this.state.open,
     });
+    const triangleClass = classNames({
+      'user-dropdown__triangle': true,
+      'open': this.state.open,
+    });
 
     return (
-      <div onClick={() => { this.toggleDropdown(); }} className='user-dropdown' tabIndex={0}>
+      <div onClick={this.toggleDropdown} className='user-dropdown' tabIndex={0}>
         <div className='user-dropdown__name-container'>
           {this.state.showNewRelease && (
             <img alt='!' title='Rig Update Available' src={reddot} width='8' height='8' />
           )}
           <img alt={login} className='user-dropdown__image' src={profileImageUrl} />
           <div className={usernameClasses}>{login}</div>
+          <img src={whitetriangle} className={triangleClass} />
         </div>
         <div className={dropdownClass}>
           <ul>
@@ -93,7 +101,7 @@ export class UserDropdownComponent extends React.Component<Props, State> {
                 )}
               </a>
             </li>
-            <li><hr /></li>
+            <li><div className='user-dropdown__divider'></div></li>
             <li onClick={() => { this.signOut() }}>Sign Out</li>
           </ul>
         </div>
